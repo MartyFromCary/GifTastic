@@ -1,0 +1,12 @@
+body {
+	background-color: lightblue;
+}
+
+button {
+	margin: 2px;
+	background-color: lightgreen;
+}
+
+button:focus {
+	background-color: pink;
+}
