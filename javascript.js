@@ -1,61 +1,74 @@
 "use strict";
 
+const topics = [
+    'Blade Runner',
+    'Felix the Cat',
+    'Winston Churchill',
+    'Mickey Mouse'
+];
 
+var divButtons
+var addTopic;
+var divImages;
 
-//$(function() {
-$(document).ready(function() {
-	var topics=[
-	'Blade Runner',
-	'Felix the Cat',
-	'Winston Churchill',
-	'Mickey Mouse'];
-	var ImagesArr=[];
+function loadImages(name) {
+    $.ajax({
+            url: "https://api.giphy.com/v1/gifs/search?limit=10&api_key=dc6zaTOxFJmzC&q=" +
+                name.replace(/\s/g, '+'),
+            method: 'GET'
+        })
+        .done(function(response) {
+            divImages.empty();
+            response.data.forEach(function(x) {
+                divImages
+                .append(
+                    $("<div>")
+                    .append(
+                    	$("<h3>")
+                    		.text("Rating: " + x.rating)
+                    		)
+                    .append(
+                    		$("<img>")
+                    			.attr("src", x.images.original_still.url)
+                    			.attr("alt", x.images.original.url)
+                    			)
+                	)
+            });
+            $("img").click(function() {
+                var src = $(this).attr("src");
+                var alt = $(this).attr("alt");
 
-	const Buttons=$("#Buttons");
-	const addTopic=$("#addTopic")
-	const Images=$("#Images");
+                $(this).attr("src", alt).attr("alt", src);
+            });
+        });
+}
 
-	console.log(topics.join('|'));
-	
-	topics.forEach(function(x,i){
-		Buttons.append($("<button>").attr("value",i).text(x));
-	});
+$(function() {
+    divButtons = $("#divButtons");
+    addTopic = $("#addTopic")
+    divImages = $("#divImages");
 
-	$("button").click(function(){
-		ImagesArr=[];
-		var Text=$(this).text();
-		//console.log(Text);
-		var	queryURL = "https://api.giphy.com/v1/gifs/search?q="+
-			Text.replace(/\s/g,'+')+
-			"&limit=10&api_key=dc6zaTOxFJmzC";
-			$.ajax({url: queryURL,method: 'GET'})
-			.done(function(response) {
-   				response.data.forEach(function(x){
-   					console.log(x.rating);
-					console.log(x.images.original_still.url);
-					console.log(x.images.original.url);
-				});
-   			});
-	});
+    topics.forEach(function(text) {
+        divButtons.append($("<button>").text(text));
+    });
 
-	addTopic.click(function(){
-		var newTopic=$("#topic-input").val().replace(/^\s+|\s+$/g,'');
+    addTopic.click(function(event) {
+        event.preventDefault();
+        var text = $("#topic-input").val().replace(/^\s+|\s+$/g, '').replace(/\s\s+/g, ' ');
 
-		if( newTopic=="") {
-			return;
-		}
-		console.log(Buttons.html());
+        if (text == "") {
+            return;
+        }
 
-		Buttons.append($("<button>").attr("value",topics.length).text(newTopic));
-		console.log(Buttons.html());
+        divButtons.append($("<button>").text(text));
 
-		topics.push(newTopic);
+        $("button").click(function() {
+            loadImages($(this).text());
+        });
+    });
 
-		alert(      topics.join('|'));
-		$("button").click(function(){
-			var Text=$(this).text();
-			console.log(Text);
-		});
-	});
-	
+    $("button").click(function() {
+        loadImages($(this).text());
+    });
+
 });

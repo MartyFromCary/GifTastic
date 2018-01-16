@@ -1,5 +1,5 @@
 body {
-	background-color: lightblue;
+	background-color: tan;
 }
 
 button {
@@ -9,4 +9,8 @@ button {
 
 button:focus {
 	background-color: pink;
+}
+
+img {
+	width: 600px;
 }
